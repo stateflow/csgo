@@ -18,15 +18,14 @@ module.exports = class GameStatesAnalyzer {
     // knife kills
 
     //TODO
-    // Need a system for monitoring a players state as they step through a match#
-    // You need objects that have state: game, match, player
-    // Timeline-like. E.g. how many kills in last state? last round?
+    // To make determinations, we need a record of recent states,
+    // then compare them.
 
 
     // Connect to db
     this.databaseManager.getConnection(() => {
 
-
+      //TODO iterate captured records, create some GateState objects, see what we got
 
     });
   }
