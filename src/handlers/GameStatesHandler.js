@@ -9,7 +9,9 @@ module.exports = class GameStatesHandler {
   }
 
   handle(request, response) {
-    this.gameStatesAnalyzer.analyze();
+    this.gameStatesAnalyzer.analyze((data) => {
+      return response.render('index', { data: data });
+    });
   }
 
 }

@@ -35,4 +35,16 @@ module.exports = class GameState {
   getPlayerState() {
     return this.playerState;
   }
+
+  getTimestamp() {
+    return this.data.provider.timestamp;
+  }
+
+  getHumanTimestamp() {
+    let date = new Date(
+      this.getTimestamp() * 1000
+    );
+
+    return date.toUTCString();
+  }
 }

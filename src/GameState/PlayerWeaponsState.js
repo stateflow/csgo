@@ -7,6 +7,7 @@ module.exports = class PlayerWeaponsState {
 
     // TODO account for tazers
     // TODO check for grenades, bombs, primed molotovs
+    // TODO check for scoped AWP/scout (and unscoped, noscope would be cool to know)
   }
 
   knifeIsEquipped() {
