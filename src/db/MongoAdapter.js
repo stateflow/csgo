@@ -27,19 +27,18 @@ module.exports = class MongoAdapter {
     activeConnection.close();
   }
 
-  insertDocument(activeConnection, data, callback) {
+  getAllDocuments(activeConnection, data, callback) {
     activeConnection
       .collection(mongoCollection)
-      .insertOne(
+      .find(
         data,
-        function(err, result) {
+        (err, result) => {
           if (err) {
             console.log(err);
-            throw new Error('Unable to insert document into mongodb collection.');
+            throw new Error(`Unable to find documents in mongodb collection "${mongoCollection}".`);
           }
 
-          let recordsWritten = 1;
-          callback(recordsWritten);
+          callback(result);
         }
       );
   }

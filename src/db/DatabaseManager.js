@@ -2,13 +2,10 @@
 
 const MongoAdapter = require('./MongoAdapter.js');
 
-const inactivityTimeout = 30000;
-
 module.exports = class DatabaseManager {
 
   constructor() {
     this.connection = null;
-    this.connectionTimeout;
     this.mongoAdapter = new MongoAdapter();
   }
 
@@ -23,7 +20,6 @@ module.exports = class DatabaseManager {
   connect(callback) {
     this.mongoAdapter.connect((newConnection) => {
       this.connection = newConnection;
-      this.startConnectionTimeout();
 
       callback(newConnection);
     });
@@ -38,30 +34,17 @@ module.exports = class DatabaseManager {
     return this.connection !== null;
   }
 
-  insertRecord(data, callback) {
-    this.resetConnectionTimeout();
+  getGameStateRecords(callback) {
 
     if (this.connection === null) {
-      throw new Error('Unable to insert document without a valid connection.');
+      throw new Error('Unable to retrieve documents without a valid connection.');
     }
 
-    return this.mongoAdapter.insertDocument(
+    return this.mongoAdapter.getAllDocuments(
       this.connection,
-      data,
-      () => {
-        this.startConnectionTimeout();
-        callback()
-      }
+      {},
+      callback
     );
   }
 
-  startConnectionTimeout() {
-    this.connectionTimeout = setTimeout(() => {
-      this.disconnect();
-    }, inactivityTimeout);
-  }
-
-  resetConnectionTimeout() {
-    clearTimeout(this.connectionTimeout);
-  }
 }

@@ -5,12 +5,12 @@ const app = express();
 app.set('view engine', 'pug');
 app.set('views', `${__dirname}/views`)
 
-const GameStatesAnalyzer = require('./src/handlers/GameStatesAnalyzer.js');
+const GameStatesHandler = require('./src/handlers/GameStatesHandler.js');
 
-var gameStatesAnalyzer = new GameStatesAnalyzer();
+var gameStatesHandler = new GameStatesHandler();
 
 app.get('/', function(request, response) {
-  return gameStatesAnalyzer.handle(request, response);
+  return gameStatesHandler.handle(request, response);
 });
 
 app.listen(port, function () {

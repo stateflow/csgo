@@ -1,7 +1,6 @@
 'use strict';
 
-const DatabaseManager = require('../db/DatabaseManager.js');
-const GameStateParser = require('./GameStateParser.js');
+const DatabaseManager = require('./db/DatabaseManager.js');
 
 module.exports = class GameStatesAnalyzer {
 
@@ -23,9 +22,12 @@ module.exports = class GameStatesAnalyzer {
 
 
     // Connect to db
-    this.databaseManager.getConnection(() => {
+    this.databaseManager.getConnection((db) => {
 
       //TODO iterate captured records, create some GateState objects, see what we got
+      this.databaseManager.getGameStateRecords((cursor) => {
+        //TODO.. Do this.
+      });
 
     });
   }
