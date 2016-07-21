@@ -10,7 +10,7 @@ module.exports = class GameStatesAnalyzer {
   constructor() {
     this.databaseManager = new DatabaseManager();
     this.playerGoalManager = new PlayerGoalManager();
-    this.trackers = this.playerGoalManager.getMatchTrackers();
+    this.sessionMetaTracker = this.playerGoalManager.getSessionMetaTracker();
   }
 
   analyze(callback) {
@@ -20,19 +20,18 @@ module.exports = class GameStatesAnalyzer {
 
       this.databaseManager.getGameStateRecords((records) => {
 
-        records.forEach((record) => {
-          let newState = new GameState(record);
-          this.playerGoalManager.trackGoals(newState);
-        }, () => {
-
-          this.trackers.forEach((tracker) => {
-            console.log(tracker.reportResults());
-          });
-          callback(records);
-        });
+        records.forEach(
+          (record) => {
+            let newState = new GameState(record);
+            this.playerGoalManager.trackGoals(newState);
+          },
+          () => {
+            console.log(this.sessionMetaTracker.reportResults());
+            callback(records);
+          }
+        );
 
       });
-
     });
   }
 }

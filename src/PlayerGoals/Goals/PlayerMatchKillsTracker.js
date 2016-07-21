@@ -27,8 +27,9 @@ module.exports = class PlayerMatchKillsTracker {
   }
 
   reset() {
-    this.stopTracking();
-    this.playerKillCount = 0;
+    // console.log('Match kills reset?');
+    // this.stopTracking();
+    // this.playerKillCount = 0;
   }
 
   conditionsAreSuitable(gameState) {

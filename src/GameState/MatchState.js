@@ -6,6 +6,10 @@ module.exports = class MatchState {
     this.mapData = mapData;
   }
 
+  hasMapStateData() {
+    return typeof(this.mapData) !== "undefined";
+  }
+
   getCurrentMap() {
     return this.mapData.name;
   }

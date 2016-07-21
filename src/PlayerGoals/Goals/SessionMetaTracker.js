@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = class GameMetaTracker {
+module.exports = class SessionMetaTracker {
 
   constructor() {
     this.MODE_PLAYING = 'MODE_PLAYING';
@@ -20,7 +20,24 @@ module.exports = class GameMetaTracker {
     return this.gameMode === this.MODE_PLAYING;
   }
 
-  shouldResetTrackers(newState) {
+  trackSession(gameState) {
+    this.gameMode = this.getGameModeFromActivity(gameState.data.player.activity);
+
+    this.updateSessionProgress(this.previousState, gameState);
+
+    if (this.gameActivityIsPlaying()) {
+      if (this.currentMap !== gameState.data.map.name) {
+        console.log(`User started playing on ${gameState.data.map.name}`);
+      }
+      this.currentMap = gameState.data.map.name;
+      this.currentRound = gameState.data.map.round;
+    }
+
+    this.previousState = JSON.parse(JSON.stringify(gameState));
+  }
+
+  // TODO - double reported per map
+  matchHasEnded(newState) {
     if (this.previousState === null) {
       return false;
     }
@@ -32,8 +49,9 @@ module.exports = class GameMetaTracker {
       newState.data.player.activity
     );
 
-    if (newActivity !== previousActivity) {
-      console.log(`Activity changed (${previousActivity} => ${newActivity}).`);
+    // NOTE - User can be in a match, but hit esc and go to menus.
+    // In this scenario, map state data will still be included, so we check for that.
+    if (newActivity !== this.MODE_PLAYING && newState.getMatchState().hasMapStateData() === false) {
       return true;
     }
 
@@ -52,26 +70,13 @@ module.exports = class GameMetaTracker {
     return false;
   }
 
-  updateGameModeInfo(gameState) {
-    this.gameMode = this.getGameModeFromActivity(gameState.data.player.activity);
-
-    if (this.gameActivityIsPlaying()) {
-      this.currentMap = gameState.data.map.name;
-      this.currentRound = gameState.data.map.round;
-    }
-
-    this.updateSessionProgress(gameState);
-
-    this.previousState = JSON.parse(JSON.stringify(gameState));
-  }
-
-  updateSessionProgress(newState) {
-    if (this.previousState === null) {
+  updateSessionProgress(previousState, newState) {
+    if (previousState === null) {
       return;
     }
 
     let previousActivity = this.getGameModeFromActivity(
-      this.previousState.data.player.activity
+      previousState.data.player.activity
     );
     let newActivity = this.getGameModeFromActivity(
       newState.data.player.activity
@@ -82,7 +87,7 @@ module.exports = class GameMetaTracker {
     }
 
     if (this.gameActivityIsPlaying()) {
-      if (this.currentMap !== newState.data.map.name || this.sessionMapsPlayed.length === 0) {
+      if ((this.currentMap !== newState.data.map.name) || this.sessionMapsPlayed.length === 0) {
         this.sessionMapsPlayed.push(newState.data.map.name);
       }
     }
@@ -93,10 +98,18 @@ module.exports = class GameMetaTracker {
       return this.MODE_PLAYING;
     }
 
-    return this.MODE_MENU;
+    if (activity === 'menu') {
+      return this.MODE_MENU;
+    }
+
+    throw new Error(`Unrecognised activity "${activity}"`);
   }
 
   reportResults() {
     return `Session activities: [${this.sessionActivities.toString()}], Maps played: [${this.sessionMapsPlayed.toString()}]`;
+  }
+
+  reset() {
+    // Do nothing
   }
 }

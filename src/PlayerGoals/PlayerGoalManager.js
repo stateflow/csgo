@@ -1,6 +1,6 @@
 'use strict';
 
-const GameMetaTracker = require('./Goals/GameMetaTracker.js');
+const SessionMetaTracker = require('./Goals/SessionMetaTracker.js');
 const PlayerMatchKillsTracker = require('./Goals/PlayerMatchKillsTracker.js');
 
 module.exports = class PlayerGoalManager {
@@ -30,23 +30,21 @@ module.exports = class PlayerGoalManager {
   // - [ ] Got a molotov kill
 
   constructor() {
+    this.sessionMetaTracker = new SessionMetaTracker();
     this.matchTrackers = new Map();
     this.matchTrackers.set('playerMatchKillsTracker', new PlayerMatchKillsTracker());
-    this.matchTrackers.set('gameMetaTracker', new GameMetaTracker());
-
-    this.previousState = null;
-    this.gameMode = 'menu';
-    this.gameMap = null;
-    this.gameRound = null;
   }
 
   trackGoals(gameState) {
-    let gameMetaTracker = this.matchTrackers.get('gameMetaTracker');
-    gameMetaTracker.updateGameModeInfo(gameState);
+    let matchHasEnded = this.sessionMetaTracker.matchHasEnded(gameState);
+    this.sessionMetaTracker.trackSession(gameState);
 
-    if (gameMetaTracker.shouldResetTrackers(gameState)) {
+    if (matchHasEnded) {
       this.resetMatchTrackers();
-      console.log(`Reset trackers.`);
+      console.log('Match ended, reporting...');
+      this.matchTrackers.forEach((tracker) => {
+        console.log(tracker.reportResults());
+      });
       return;
     }
 
@@ -77,7 +75,7 @@ module.exports = class PlayerGoalManager {
     });
   }
 
-  getMatchTrackers() {
-    return this.matchTrackers;
+  getSessionMetaTracker() {
+    return this.sessionMetaTracker;
   }
 }
