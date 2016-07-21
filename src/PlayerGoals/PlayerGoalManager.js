@@ -8,16 +8,16 @@ module.exports = class PlayerGoalManager {
   // TODO Implement these PlayerGoals
   // ---------------------------------
   // - [x] Got a kill
-  // - [ ] Got a kill whilst flashed
-  // - [ ] Got a kill whilst burning
-  // - [ ] Got a kill with low HP
-  // - [ ] Got a kill with 1 HP
+  // - [x] Got a kill whilst flashed
+  // - [x] Got a kill whilst burning
+  // - [x] Got a kill with low HP
+  // - [x] Got a kill with 1 HP
   // - [ ] Got a 3K
   // - [ ] Got a 4K
   // - [ ] Got an Ace
   // - [ ] Made a Clutch
   // - [ ] Made an Ace-Clutch
-  // - [ ] Got a knife kill (not sure it's possible))
+  // - [ ] Got a knife kill (not sure it's possible)
   // - [ ] Got 2+ knife kills
   // - [ ] Got a headshot
   // - [ ] Got 3 headshots
@@ -49,24 +49,25 @@ module.exports = class PlayerGoalManager {
       this.matchTrackers.forEach((tracker) => {
         console.log(tracker.reportResults());
       });
-      console.log('');
+      console.log(''); // new line
       this.resetMatchTrackers();
       return;
     }
 
     let playerMatchKillsTracker = this.matchTrackers.get('playerMatchKillsTracker');
 
-    // should we start tracking?
+    // should we start tracking kills?
     if (playerMatchKillsTracker.isDormant() && playerMatchKillsTracker.conditionsAreSuitable(gameState)) {
       playerMatchKillsTracker.startTracking();
     }
 
-    // are we tracking?
+    // should we check for new kills?
     if (playerMatchKillsTracker.isTracking()) {
+      // yep! are new kills still possible?
       if (playerMatchKillsTracker.conditionsAreSuitable(gameState)) {
         // record kills
         if (playerMatchKillsTracker.userGotAKill(gameState)) {
-          playerMatchKillsTracker.addAKill();
+          playerMatchKillsTracker.addAKill(gameState.getPlayerState());
         }
       } else {
         // e.g. player is in "gameover" or spectating

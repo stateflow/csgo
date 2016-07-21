@@ -13,23 +13,29 @@ module.exports = class GameStatesAnalyzer {
     this.sessionMetaTracker = this.playerGoalManager.getSessionMetaTracker();
   }
 
-  analyze(callback) {
+  analyze(data) {
+    // NOTE - this currently expects filtered requests from the listener
+    // For now we are proxying them here instead of putting them into MongoDB
+    // console.log(data);
+    // process.exit(1);
+    let gameState = new GameState(data);
+    this.playerGoalManager.trackGoals(gameState, 0, 9999999); //TODO make these params optional
+  }
 
+  /**
+   * This analyzes a fixed database of game states, rather than accepting real-time data.
+   */
+  debugAnalyze(callback) {
     // Connect to db
     this.databaseManager.getConnection((db) => {
-
-
       this.databaseManager.getGameStateRecords((records) => {
-
           let total = records.length;
-
           records.forEach(
             (record, index) => {
               let newState = new GameState(record);
               this.playerGoalManager.trackGoals(newState, index, total);
             }
           );
-
           console.log('--------- Session Ended. ---------');
           console.log(this.sessionMetaTracker.reportResults());
           callback(records);

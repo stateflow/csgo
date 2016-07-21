@@ -8,8 +8,8 @@ module.exports = class GameState {
   constructor(data) {
     this.data = data;
 
-    this.matchState = new MatchState(this.data.map);
-    this.playerState = new PlayerState(this.data.player);
+    this.matchState = (this.data.map) ? new MatchState(this.data.map) : null;
+    this.playerState = (this.data.player) ? new PlayerState(this.data.player) : null;
   }
 
   getPlayerName() {
@@ -25,7 +25,7 @@ module.exports = class GameState {
   }
 
   userIsPlaying() {
-    //TODO  what is "textinput"?
+    //TODO  what is "textinput" exactly? console open? typing in chat? both?
     return (
       this.data.provider.steamid === this.data.player.steamid
       && (
