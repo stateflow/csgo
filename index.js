@@ -5,14 +5,16 @@ const app = express();
 app.set('view engine', 'pug');
 app.set('views', `${__dirname}/views`)
 
-const GameStatesHandler = require('./src/handlers/GameStatesHandler.js');
-
-var gameStatesHandler = new GameStatesHandler();
-
-app.get('/', function(request, response) {
-  return gameStatesHandler.handle(request, response);
-});
+const GameStatesAnalyzer = require('./src/GameStatesAnalyzer.js');
+var gameStatesAnalyzer = new GameStatesAnalyzer();
 
 app.listen(port, function () {
-  console.log(`Listener ready on port ${port}`);
+  console.log(`Worker running on port ${port}`);
+  console.log('------------------------------');
+
+  gameStatesAnalyzer.analyze((data) => {
+    console.log('Analysis complete!');
+    console.log('------------------------------');
+    process.exit(1);
+  });
 });

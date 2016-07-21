@@ -7,39 +7,39 @@ module.exports = class MatchState {
   }
 
   getCurrentMap() {
-    return this.data.map.name;
+    return this.mapData.name;
   }
 
   getCurrentRound() {
-    return this.data.map.round;
+    return this.mapData.round;
   }
 
   getCtScore() {
-    return this.data.map.team_ct.score;
+    return this.mapData.team_ct.score;
   }
 
   getTScore() {
-    return this.data.map.team_t.score;
+    return this.mapData.team_t.score;
   }
 
   isCasual() {
-    return this.data.map.mode === "casual";
+    return this.mapData.mode === "casual";
   }
 
   isCompetitive() {
-    return this.data.map.mode === "competitive"; //TODO untested
+    return this.mapData.mode === "competitive"; //TODO untested
   }
 
   isWarmup() {
-    return this.data.map.phase === 'warmup';
+    return this.mapData.phase === 'warmup';
   }
 
   isFreezetime() {
-    return this.data.map.phase === 'freezetime'; //TODO untested
+    return this.mapData.phase === 'freezetime'; //TODO untested
   }
 
   isLive() {
-    return this.data.map.phase === 'live';
+    return this.mapData.phase === 'live';
   }
 
 }

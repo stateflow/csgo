@@ -24,8 +24,15 @@ module.exports = class GameState {
     return this.data.player.activity === "menu";
   }
 
-  isInGame() {
-    return this.data.player.activity === "playing";
+  userIsPlaying() {
+    //TODO  what is "textinput"?
+    return (
+      this.data.provider.steamid === this.data.player.steamid
+      && (
+        this.data.player.activity === "playing"
+        || this.data.player.activity === "textinput"
+      )
+    );
   }
 
   getMatchState() {
