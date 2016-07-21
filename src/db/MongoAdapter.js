@@ -30,16 +30,14 @@ module.exports = class MongoAdapter {
   getAllDocuments(activeConnection, data, callback) {
     activeConnection
       .collection(mongoCollection)
-      .find(
-        data,
-        (err, result) => {
-          if (err) {
-            console.log(err);
-            throw new Error(`Unable to find documents in mongodb collection "${mongoCollection}".`);
-          }
-
-          callback(result);
+      .find(data)
+      .toArray((err, result) => {
+        if (err) {
+          console.log(err);
+          throw new Error(`Unable to find documents in mongodb collection "${mongoCollection}".`);
         }
-      );
+
+        callback(result);
+      });
   }
 }

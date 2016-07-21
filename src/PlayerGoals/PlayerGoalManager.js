@@ -35,16 +35,22 @@ module.exports = class PlayerGoalManager {
     this.matchTrackers.set('playerMatchKillsTracker', new PlayerMatchKillsTracker());
   }
 
-  trackGoals(gameState) {
+  trackGoals(gameState, index, total) {
     let matchHasEnded = this.sessionMetaTracker.matchHasEnded(gameState);
     this.sessionMetaTracker.trackSession(gameState);
 
-    if (matchHasEnded) {
-      this.resetMatchTrackers();
+    // NOTE only useful for static mongodb db stream
+    // Can probably remove it when we adapt to realtime stream
+    let quitWhilstPlaying = (index+1 === total && this.sessionMetaTracker.gameActivityIsPlaying());
+
+    if (matchHasEnded || quitWhilstPlaying) {
+
       console.log('Match ended, reporting...');
       this.matchTrackers.forEach((tracker) => {
         console.log(tracker.reportResults());
       });
+      console.log('');
+      this.resetMatchTrackers();
       return;
     }
 

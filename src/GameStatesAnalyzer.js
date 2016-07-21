@@ -18,19 +18,21 @@ module.exports = class GameStatesAnalyzer {
     // Connect to db
     this.databaseManager.getConnection((db) => {
 
+
       this.databaseManager.getGameStateRecords((records) => {
 
-        records.forEach(
-          (record) => {
-            let newState = new GameState(record);
-            this.playerGoalManager.trackGoals(newState);
-          },
-          () => {
-            console.log(this.sessionMetaTracker.reportResults());
-            callback(records);
-          }
-        );
+          let total = records.length;
 
+          records.forEach(
+            (record, index) => {
+              let newState = new GameState(record);
+              this.playerGoalManager.trackGoals(newState, index, total);
+            }
+          );
+
+          console.log('--------- Session Ended. ---------');
+          console.log(this.sessionMetaTracker.reportResults());
+          callback(records);
       });
     });
   }
