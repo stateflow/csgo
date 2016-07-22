@@ -8,8 +8,12 @@ module.exports = class GameState {
   constructor(data) {
     this.data = data;
 
-    this.matchState = (this.data.map) ? new MatchState(this.data.map) : null;
-    this.playerState = (this.data.player) ? new PlayerState(this.data.player) : null;
+    this.matchState = (data && data.map) ? new MatchState(data.map) : null;
+    this.playerState = (data && data.player) ? new PlayerState(data.player) : null;
+  }
+
+  getData() {
+    return this.data;
   }
 
   getPlayerName() {
@@ -35,6 +39,10 @@ module.exports = class GameState {
     );
   }
 
+  hasMatchState() {
+    return this.matchState !== null;
+  }
+
   getMatchState() {
     return this.matchState;
   }
@@ -53,5 +61,27 @@ module.exports = class GameState {
     );
 
     return date.toUTCString();
+  }
+
+  getStateWithoutTimestamp() {
+    //console.log(this.data);process.exit(1);
+    if (typeof(this.data) === "undefined") {
+      return this.data;
+    }
+
+    let clone = this.lazyClone(this.data);
+    clone.provider.timestamp = 0;
+
+    return clone;
+  }
+
+  asStringWithoutTimestamp() {
+    return JSON.stringify(this.getStateWithoutTimestamp());
+  }
+
+  lazyClone() {
+    let asString = JSON.stringify(this.getData());
+
+    return JSON.parse(asString);
   }
 }

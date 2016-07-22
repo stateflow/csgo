@@ -13,12 +13,7 @@ module.exports = class GameStatesAnalyzer {
     this.sessionMetaTracker = this.playerGoalManager.getSessionMetaTracker();
   }
 
-  analyze(data) {
-    // NOTE - this currently expects filtered requests from the listener
-    // For now we are proxying them here instead of putting them into MongoDB
-    // console.log(data);
-    // process.exit(1);
-    let gameState = new GameState(data);
+  analyze(gameState) {
     this.playerGoalManager.trackGoals(gameState, 0, 9999999); //TODO make these params optional
   }
 

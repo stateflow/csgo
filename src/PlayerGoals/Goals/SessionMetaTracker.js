@@ -33,6 +33,11 @@ module.exports = class SessionMetaTracker {
       this.currentRound = gameState.data.map.round;
     }
 
+    // NOTE - "Menu" activity occurs with the in-game esc menu, but the phase remains live.
+    if (!this.gameActivityIsPlaying() && !gameState.hasMatchState()) {
+      console.log('-------- User went to menus. -------');
+    }
+
     this.previousState = JSON.parse(JSON.stringify(gameState));
   }
 
