@@ -1,5 +1,7 @@
 'use strict';
 
+const PlayerKill = require('./PlayerKill.js');
+
 module.exports = class PlayerMatchKillsTracker {
 
   constructor() {
@@ -7,11 +9,8 @@ module.exports = class PlayerMatchKillsTracker {
     this.STATE_TRACKING = 'STATE_TRACKING';
     this.state = this.STATE_DORMANT;
 
-    this.playerRegularKillCount = 0;
-    this.playerLowHpKillsCount = 0;
-    this.playerFlashedKillsCount = 0;
-    this.playerBurningKillsCount = 0;
-    this.playerOneHpKillsCount = 0;
+    this.playerKills = [];
+    this.roundHeadshots = [];
   }
 
   startTracking() {
@@ -31,11 +30,12 @@ module.exports = class PlayerMatchKillsTracker {
   }
 
   reset() {
-    this.playerRegularKillCount = 0;
-    this.playerLowHpKillsCount = 0;
-    this.playerFlashedKillsCount = 0;
-    this.playerBurningKillsCount = 0;
-    this.playerOneHpKillsCount = 0;
+    this.playerKills = [];
+    this.roundHeadshots = [];
+  }
+
+  resetRound() {
+    this.roundHeadshots = [];
   }
 
   conditionsAreSuitable(gameState) {
@@ -50,52 +50,38 @@ module.exports = class PlayerMatchKillsTracker {
     return gameState.getPlayerState().getPlayerMatchKills() > this.getTotalKills();
   }
 
-  addAKill(playerState) {
-    if (playerState.getPlayerHp() <= 20) {
-      console.log(`User got a kill (low HP, ${playerState.getPlayerHp()})!`);
-      this.playerLowHpKillsCount++;
-      return;
-    }
+  userGotAHeadshotKill(gameState) {
+    return gameState.getPlayerState().getPlayerRoundHeadshots() > this.getRoundHeadshots();
+  }
 
-    if (playerState.getPlayerHp() === 1) {
-      console.log(`User got a kill (1 HP)!`);
-      this.playerOneHpKillsCount++;
-      return;
-    }
+  /**
+   * Add a kill, but check if it was of a special type.
+   * NOTE - Waterfall-style, "rarest" first & the types cannot stack.
+   */
+  addAKill(gameState, wasHeadshot = false) {
+    let playerState = gameState.getPlayerstate();
+    let playerKill = new PlayerKill(gameState);
+    playerKill.setWasHeadshot(wasHeadshot);
 
-    if (playerState.playerIsFlashed()) {
-      console.log(`User got a kill (flashed)!`);
-      this.playerFlashedKillsCount++;
-      return;
-    }
-
-    if (playerState.playerIsBurning()) {
-      console.log(`User got a kill (burning)!`);
-      this.playerBurningKillsCount++;
-      return;
-    }
-
-    console.log('User got a kill!');
-    this.playerRegularKillCount++;
+    this.playerKills.push(playerKill);
   }
 
   getTotalKills() {
-    return (
-      this.playerRegularKillCount
-      + this.playerLowHpKillsCount
-      + this.playerFlashedKillsCount
-      + this.playerBurningKillsCount
-      + this.playerOneHpKillsCount
-    );
+    return this.playerKills.length;
+  }
+
+  getRoundHeadshots() {
+    return this.roundHeadshots;
   }
 
   reportResults() {
-    let regular = this.playerRegularKillCount;
-    let lowHp = this.playerLowHpKillsCount;
-    let flashed = this.playerFlashedKillsCount;
-    let burning = this.playerBurningKillsCount;
-    let oneHp = this.playerOneHpKillsCount;
-
-    return `${this.getTotalKills()} kills in this match (${regular} regular, ${lowHp} low hp, ${flashed} flashed, ${burning} burning, ${oneHp} 1-hp.)`;
+    return 'PlayerMatchKillsTracker.reportResults TODO';
+    // let regular = this.playerRegularKillCount;
+    // let lowHp = this.playerLowHpKillsCount;
+    // let flashed = this.playerFlashedKillsCount;
+    // let burning = this.playerBurningKillsCount;
+    // let oneHp = this.playerOneHpKillsCount;
+    //
+    // return `${this.getTotalKills()} kills in this match (${regular} regular, ${lowHp} low hp, ${flashed} flashed, ${burning} burning, ${oneHp} 1-hp.)`;
   }
 }

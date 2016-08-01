@@ -1,6 +1,6 @@
 'use strict';
 
-const DatabaseManager = require('./db/DatabaseManager.js');
+const DatabaseManager = require('./Database/DatabaseManager.js');
 
 const GameState = require('./GameState/GameState.js');
 const PlayerGoalManager = require('./PlayerGoals/PlayerGoalManager.js');
@@ -13,12 +13,19 @@ module.exports = class GameStatesAnalyzer {
     this.sessionMetaTracker = this.playerGoalManager.getSessionMetaTracker();
   }
 
+  /**
+   * Analyzes game states in realtime.
+   *
+   * @param  {GameState} gameState
+   */
   analyze(gameState) {
-    this.playerGoalManager.trackGoals(gameState, 0, 9999999); //TODO make these params optional
+    this.playerGoalManager.trackGoals(gameState);
   }
 
   /**
    * This analyzes a fixed database of game states, rather than accepting real-time data.
+   *
+   * @param {function} callback
    */
   debugAnalyze(callback) {
     // Connect to db

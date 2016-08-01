@@ -6,8 +6,6 @@ const bodyParser = require('body-parser');
 const port = 3001;
 const app = express();
 app.use(bodyParser.json());
-app.set('view engine', 'pug');
-app.set('views', `${__dirname}/views`)
 
 const GameStatesAnalyzer = require('./src/GameStatesAnalyzer.js');
 const GameState = require('./src/GameState/GameState.js');
@@ -16,10 +14,9 @@ var gameStatesAnalyzer = new GameStatesAnalyzer();
 var oldState = new GameState();
 
 // TODO
-// The analysis will become confused if the application quits and restarts
-// Also, it seemed to get stuck during realtime testing.
-// Also, the kills monitoring has waterfall flaw: low hp overwrites flashbang
-// Game session stuff (ending a match etc) doesn't work in realtime mode
+// - The analysis will become confused if the application quits and restarts
+// - It seemed to get stuck during realtime testing.
+// - Game session stuff (ending a match etc) doesn't work in realtime mode
 
 const returnEmptyResponse = (response) => {
   return response
@@ -30,7 +27,6 @@ const returnEmptyResponse = (response) => {
 
 app.post('/', (request, response) => {
   if (typeof request.body === "undefined") {
-    console.log('Cannot parse request - no body');
     return;
   }
 
@@ -47,14 +43,12 @@ app.post('/', (request, response) => {
 });
 
 app.listen(port, () => {
-  console.log(process.env.DEBUG_MODE);
-  console.log(`Worker running on port ${port}`);
-  console.log('------------------------------');
+  let mode = (process.env.DEBUG_MODE) ? 'debug' : 'normal';
+  console.log(`Worker running in ${mode} mode on port ${port}`);
 
-  if (process.env.DEBUG_MODE) {
+  if (mode === 'debug') {
     gameStatesAnalyzer.debugAnalyze(() => {
       console.log('Analysis complete!');
-      console.log('------------------------------');
       process.exit(1);
     });
   }

@@ -1,20 +1,18 @@
 {
-  "name": "worker",
+  "name": "stateflow-csgo",
   "version": "0.0.1",
-  "private": true,
-  "description": "Worker application for analyzing, restructuring & ouputting CSGO Game State data.",
+  "description": "Client application for analyzing CSGO Game State data.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "sam@sgb.io",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "dependencies": {
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "fs": "0.0.2",
     "http": "0.0.0",
-    "mongodb": "^2.2.1",
-    "pug": "^2.0.0-beta3"
+    "mongodb": "^2.2.1"
   }
 }
